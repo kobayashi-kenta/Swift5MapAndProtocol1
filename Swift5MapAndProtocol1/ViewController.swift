@@ -9,7 +9,8 @@ import UIKit
 import MapKit
 import CoreLocation
 
-class ViewController: UIViewController,CLLocationManagerDelegate,UIGestureRecognizerDelegate {
+class ViewController: UIViewController,CLLocationManagerDelegate,UIGestureRecognizerDelegate,SearchLocationDelegate {
+ 
 
     var adressString = ""
     @IBOutlet var longPress: UILongPressGestureRecognizer!
@@ -64,8 +65,49 @@ class ViewController: UIViewController,CLLocationManagerDelegate,UIGestureRecogn
                     self.adressLabel.text = self.adressString
                 }
             }
-            
         }
     }
+    
+    
+    @IBAction func goToSearchVC(_ sender: Any) {
+        
+        performSegue(withIdentifier: "next", sender: nil)
+    }
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "next"{
+            let nextVC = segue.destination as! NextViewController
+            nextVC.delegate = self
+        }
+    }
+    
+    func searchLocation(idoValue: String, keidoValue: String) {
+        
+        if idoValue.isEmpty != true && keidoValue.isEmpty != true{
+            
+            let idoString = idoValue
+            let keidoString = keidoValue
+            
+            let coordinate = CLLocationCoordinate2DMake(Double(idoString)!, Double(keidoString)!)
+            
+            let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+            
+            let region = MKCoordinateRegion(center: coordinate, span: span)
+            
+            mapView.setRegion(region, animated: true)
+            
+            convert(lat: Double(idoString)!, log: Double(keidoString)!)
+            
+            adressLabel.text = adressString
+            
+            
+            
+        }else{
+            adressLabel.text = "表示できません"
+        }
+    }
+    
+    
 }
 
